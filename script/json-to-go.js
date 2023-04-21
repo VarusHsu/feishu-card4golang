@@ -6,7 +6,7 @@
 
 	A simple utility to translate JSON into a Go type definition.
 */
-
+var fieldMap = new Map()
 function jsonToGo(json, typename, flatten = true, example = false, allOmitempty = false)
 {
     let data;
@@ -173,6 +173,7 @@ function jsonToGo(json, typename, flatten = true, example = false, allOmitempty 
 
         if (flatten && depth >= 2)
         {
+            parent = getFieldGoStructName(parent)
             const parentType = `type ${parent}`;
             const scopeKeys = formatScopeKeys(Object.keys(scope));
 
@@ -440,6 +441,17 @@ function jsonToGo(json, typename, flatten = true, example = false, allOmitempty 
             keys[i] = format(keys[i]);
         }
         return keys
+    }
+
+    function getFieldGoStructName(field){
+        if (fieldMap.get(field) === undefined){
+            fieldMap.set(field,1)
+            return field
+        }else{
+            let count = fieldMap.get(field)
+            fieldMap.set(field,count+1)
+            return field+count
+        }
     }
 }
 
